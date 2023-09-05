@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/materialToolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="127dp"
+            android:layout_margin="0px"
+            android:layout_marginStart="0px"
+            android:layout_marginEnd="0px"
+            android:background="?attr/colorPrimary"
+            android:fontFamily="@font/dyslexie"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleCentered="true" />
+
+
+        <!--- TODO LATER: ADD ICONS TO BUTTONS -->
+
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="366dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/search_bubble"
+            app:layout_constraintBottom_toBottomOf="@+id/materialToolbar_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.481"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view4"
+            app:layout_constraintVertical_bias="0.555" />
+
+        <TextView
+            android:id="@+id/home_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/dyslexie"
+            android:text="@string/title_home"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.082" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/stores_button"
+            android:layout_width="81dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/shop_icon"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:contentDescription="Shops"
+            app:layout_constraintBottom_toTopOf="@+id/pharmacies_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/near_me_button"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="40dp"
+            android:background="#3070D0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialToolbar_main" />
+
+        <TextView
+            android:id="@+id/my_info_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/dyslexie"
+            android:text="discover"
+            android:textColor="#000000"
+
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/near_me_button"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/pharmacies_button"
+            android:layout_width="81dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/icon_fun"
+            android:text=""
+            android:textColor="@color/white"
+            android:contentDescription="Pharmacies"
+            app:layout_constraintEnd_toStartOf="@+id/bars_button"
+            app:layout_constraintHorizontal_bias="0.871"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/food_button" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/gyms_button"
+            android:layout_width="81dp"
+            android:layout_height="86dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/icon_bathroom"
+            android:textColor="@color/white"
+            android:contentDescription="Gyms"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.092"
+            app:layout_constraintStart_toEndOf="@+id/stores_button"
+            app:layout_constraintTop_toBottomOf="@+id/near_me_button" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/food_button"
+            android:layout_width="81dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/food_icon"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="13.1sp"
+            android:contentDescription="Food"
+            app:layout_constraintEnd_toStartOf="@+id/stores_button"
+            app:layout_constraintHorizontal_bias="0.857"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/near_me_button" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bars_button"
+            android:layout_width="81dp"
+            android:layout_height="86dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/icon_drinks"
+            android:textColor="@color/white"
+            android:contentDescription="Bars"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.667"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gyms_button" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/near_me_button"
+            android:layout_width="248dp"
+            android:layout_height="62dp"
+            android:layout_gravity="start"
+            android:layout_marginTop="130dp"
+            android:background="@drawable/purple_button"
+            android:fontFamily="@font/dyslexie"
+            android:text="@string/near_me"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14.5sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialToolbar_main" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="50dp"
+            android:background="#3070D0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pharmacies_button" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/about_us_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+            android:fontFamily="@font/dyslexie"
+            android:onClick="openPreferencesActivity"
+            android:text="more about us"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <view
+            android:id="@+id/bottom_navbar_profile2"
+            class="com.google.android.material.bottomnavigation.BottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:background="@color/skyBlue"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/about_us_section"
+            app:menu="@menu/bottom_navbar_menu"
+            tools:ignore="VisualLintBottomNav" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

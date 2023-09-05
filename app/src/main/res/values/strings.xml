@@ -1,0 +1,414 @@
+<resources>
+    <string name="app_name"> </string>
+    <string name="title_activity_login">welcomed.</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="forgot_password">forgot password?</string>
+    <string name="log_in">log in</string>
+    <string name="new_here">New to welcomed?</string>
+    <string name="sign_up_now">Sign up now</string>
+    <string name="Welcomed_App_Logo">Welcomed App Logo. The word welcomed inside a tear-drop shape outlined in rainbow colors. Inside is also a disability icon, which shows a person sitting in a wheelchair.</string>
+
+    <string name="gender_spinner_hint">Select your gender</string>
+    <string name="ethnicity_spinner_hint">Select your ethnicity</string>
+    <string name="name_spinner_hint">enter your name </string>
+    <string name="orientation_spinner_hint">Select your sexual orientation</string>
+    <string name="abilities_spinner_hint">Select your abilities</string>
+    <string name="anon_spinner_hint">Select if you would like to post anonymously</string>
+
+    <string name="goBack">Back arrow, takes you to previous page.</string>
+    <string name="near_me">what\'s near me?</string>
+    <string name="food">food</string>
+    <string name="stores">stores</string>
+    <string name="gyms">gyms</string>
+    <string name="pharm">pharm</string>
+    <string name="bars">bars</string>
+
+    <string name="user_name">name</string>
+    <string name="gender">gender</string>
+    <string name="ethn">race</string>
+    <string name="SO">sexual orientation</string>
+    <string name="disab">disabilities</string>
+    <string name="post_anon">post anonymously?</string>
+
+    <string name="preferences">preferences</string>
+
+    <string name="save_action">save</string>
+    <string name="mission_statement">welcomed. works in partnership with welcomed here, a nonprofit organization that strives to improve the inclusive customer experience for all people regardless of backgrounds and abilities. welcomed here envisions a world where everyone feels safe and welcomed in all communities. For more information, www.welcomedhere.org.</string>
+
+    <string name="positive_traits">visitors appreciated:</string>
+    <string name="negative_traits">visitors disliked:</string>
+    <string name="disclaimer">Disclaimer: The information provided to welcomed. will be used to contact the business prior to contacting the federal government. Statements are kept confidential.</string>
+
+    <string name="title_home">home</string>
+    <string name="title_dashboard">test</string>
+    <string name="title_notifications">test</string>
+    <string name="ability">inclusion supports</string>
+
+    <string name="save_button">save</string>
+
+    <string name="report_issue">report issue</string>
+    <string name="business">business on</string>
+    <string name="address">address</string>
+    <string name="concern">what type of concern?</string>
+    <string name="contact">may we contact you?</string>
+    <string name="comment">add a comment</string>
+    <string name="image_desc">image of business location</string>
+    <string name="submit_button">submit</string>
+    <string name="add_trait">add trait</string>
+    <string name="leave_feedback"> leave feedback</string>
+    <string name="business_on">business on</string>
+    <string name="address_taken">address</string>
+    <string name="good_criteria">appreciated traits</string>
+    <string name="bad_criteria">bad criteria</string>
+    <string name="custom_tags">custom tags</string>
+    <string name="other_categories">other categories</string>
+    <string name="submit">submit</string>
+
+    <string name="pfp_desc">your profile picture</string>
+    <string name="greeting">welcome.</string>
+    <string name="user">user</string>
+
+    <string name="business_name">business name</string>
+    <string name="visitor_feedback">leave feedback</string>
+    <string name="visitor_comments">visitor comments</string>
+
+    <string name="upload_image">upload an image/video</string>
+
+    <string name="profile_title">profile</string>
+    <string name="change_photo">change photo</string>
+    <string name="have_account">have an account?</string>
+    <string name="log_in_now">log in now</string>
+    <string name="sign_up">sign up</string>
+    <string name="my_info">my info</string>
+    <string name="select_your_concern">Select your concern</string>
+    <string name="select_your_answer">Select your answer</string>
+    <string name="our_partnership">our partnership</string>
+    <string name="interested_in_our_font">interested in our font?</string>
+    <string name="learn_more">learn more</string>
+    <string name="select_your_categories">Select your categories</string>
+    <string name="select_other_categories">Select other categories</string>
+    <string name="first_name">first name</string>
+    <string name="create_a_password">create a password</string>
+    <string name="have_an_account">have an account?</string>
+    <string name="log_out">Log out?</string>
+
+    <string-array name="concern_options">
+        <item></item>
+        <item>ADA</item>
+        <item>Discrimination</item>
+        <item>Other</item>
+    </string-array>
+
+
+    <string-array name="gender_options">
+        <item></item>
+        <item>Female</item>
+        <item>Male</item>
+        <item>Cisgender</item>
+        <item>Trans woman/Trans female</item>
+        <item>Trans man/Trans male</item>
+        <item>Non-binary</item>
+        <item>Agender</item>
+        <item>Genderqueer/Gender non-conforming</item>
+        <item>Prefer to self-describe</item>
+        <item>Prefer not to answer</item>
+    </string-array>
+
+    <string-array name="yes_or_no">
+        <item></item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="sexual_orientation_options">
+        <item></item>
+        <item>Straight/Heterosexual</item>
+        <item>Gay</item>
+        <item>Lesbian</item>
+        <item>Bisexual</item>
+        <item>Queer</item>
+        <item>Asexual</item>
+        <item>Prefer to self-describe</item>
+        <item>Prefer not to answer</item>
+    </string-array>
+
+    <string-array name="ethnicity_options">
+        <item></item>
+        <item>American Indian or Alaska Native</item>
+        <item>Asian</item>
+        <item>Black or African American</item>
+        <item>Native Hawaiian or Other Pacific Islander</item>
+        <item>White</item>
+        <item>Some other race, ethnicity, or origin</item>
+        <item>Prefer to self-describe</item>
+        <item>Prefer not to answer</item>
+    </string-array>
+
+    <string-array name="abilities_options">
+        <item></item>
+        <item>Hearing-related supports</item>
+        <item>Vision-related supports</item>
+        <item>Cognitive-related supports</item>
+        <item>Ambulatory-related supports</item>
+        <item>Self-care-related supports</item>
+        <item>Independent living-related supports</item>
+        <item>Prefer to self-describe supports</item>
+        <item>Prefer not to answer</item>
+        <item>None</item>
+
+    </string-array>
+
+    <string-array name="categories_options">
+        <item></item>
+        <item>Physical Accessibility</item>
+        <item>Sensory</item>
+        <item>Communication</item>
+        <item>Parking</item>
+        <item>Symbols</item>
+        <item>Bathrooms</item>
+        <item>Dietary</item>
+        <item>Safety</item>
+        <item>Business ownership</item>
+        <item>Financial</item>
+        <item>Extras</item>
+    </string-array>
+
+    <string-array name="physical_accessibility">
+        <item></item>
+        <item>Physical Accessibility</item>
+        <item>Sensory</item>
+        <item>Communication</item>
+        <item>Parking</item>
+        <item>Symbols</item>
+        <item>Bathrooms</item>
+        <item>Dietary</item>
+        <item>Safety</item>
+        <item>Business ownership</item>
+        <item>Financial</item>
+        <item>Extras</item>
+    </string-array>
+
+
+    <string-array name="sensory_options">
+        <item></item>
+        <item>Dim lights</item>
+        <item>No flashing light</item>
+        <item>No music</item>
+        <item>Classical music</item>
+        <item>Sensory space</item>
+        <item>Offers sensory toys</item>
+        <item>Headphone loan</item>
+        <item>Good acoustics</item>
+    </string-array>
+
+    <string-array name="communication_options">
+        <item></item>
+        <item>Alternative devices</item>
+        <item>Amplification</item>
+        <item>Closed captioning</item>
+        <item>Headphones</item>
+        <item>Braille</item>
+        <item>Visual aids</item>
+        <item>App available</item>
+        <item>Website is accessible</item>
+        <item>Clear information on website</item>
+        <item>Clear directional signs</item>
+    </string-array>
+
+    <string-array name="interpreters_available">
+        <item></item>
+        <item>American Sign Language</item>
+        <item>Spanish</item>
+        <item>Chinese (Mandarin, Cantonese)</item>
+        <item>Korean</item>
+        <item>Vietnamese</item>
+        <item>Tagalog</item>
+        <item>Arabic</item>
+        <item>French</item>
+        <item>Native languages</item>
+    </string-array>
+
+    <string-array name="parking">
+        <item></item>
+        <item>Paved</item>
+        <item>Wide spaces</item>
+        <item>Van accessible</item>
+        <item>Many spaces available</item>
+        <item>Ramp near spaces</item>
+        <item>Parent parking – young children</item>
+        <item>Expectant parking</item>
+        <item>Veteran parking</item>
+        <item>Well-lit</item>
+    </string-array>
+
+    <string-array name="symbols">
+        <item></item>
+        <item>LGBTQ+ rainbow</item>
+        <item>No confederate flag</item>
+        <item>No swastika</item>
+        <item>No hate symbols</item>
+        <item>Closed captioning</item>
+        <item>Accessibility icon</item>
+    </string-array>
+
+    <string-array name="bathrooms">
+        <item></item>
+        <item>Clean sanitary doors</item>
+        <item>Open out doors</item>
+        <item>Open in wide stalls</item>
+        <item>Single handlebar</item>
+        <item>Double handlebar</item>
+        <item>Push plate handle</item>
+        <item>Pull handle lever</item>
+        <item>Handle foot handle</item>
+        <item>Family friendly restroom</item>
+        <item>Gender-neutral restroom</item>
+        <item>In-stall changing stations</item>
+        <item>Out-of-stall changing stations</item>
+        <item>Companion restroom</item>
+        <item>Touch-free soap dispenser</item>
+        <item>Touch-free water faucet</item>
+        <item>Touch-free towel dispenser</item>
+        <item>Touch-free hand dryer</item>
+        <item>Nursing station</item>
+        <item>Step stools</item>
+    </string-array>
+
+    <string-array name="dietary">
+        <item></item>
+        <item>Gluten-free</item>
+        <item>Halal</item>
+        <item>Keto</item>
+        <item>Kosher</item>
+        <item>Pescatarian</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+        <item>Dairy-free</item>
+    </string-array>
+
+    <string-array name="safety">
+        <item></item>
+        <item>Well-lit</item>
+        <item>Strong cell service</item>
+        <item>Blue lights</item>
+        <item>Security on-site</item>
+        <item>Camera surveillance</item>
+    </string-array>
+
+    <string-array name="business_ownership">
+        <item></item>
+        <item>Black-owned</item>
+        <item>Indigenous-owned</item>
+        <item>Latine-owned</item>
+        <item>Asian-owned</item>
+        <item>Women-owned</item>
+        <item>Disability-owned</item>
+        <item>Veteran-owned</item>
+        <item>LGBTQ+-owned</item>
+    </string-array>
+
+    <string-array name="financial">
+        <item></item>
+        <item>Free</item>
+        <item>Low-cost</item>
+        <item>Sliding scale</item>
+        <item>Donation</item>
+    </string-array>
+
+    <string-array name="extras">
+        <item></item>
+        <item>Friendly staff</item>
+        <item>Knowledgeable staff</item>
+        <item>Aides available</item>
+        <item>Easy to locate</item>
+        <item>Easy access to/from major roads</item>
+        <item>Pet-friendly</item>
+        <item>Stroller-friendly</item>
+        <item>Feedback option</item>
+        <item>Step stools</item>
+    </string-array>
+
+    <string name="privacy_policy">
+
+At SuPurr Innovations, LLC., we value your privacy and are committed to protecting your personal information. This data privacy policy outlines how we collect, use, and protect your information.
+
+\n\n\nInformation We Collect
+
+\n\nWe collect personal information from you when you use our services or interact with our website or mobile app, welcomed.. This information may include:\n
+•   Contact information, such as your name, email address, phone number, and postal address\n
+•   Demographic information, such as your age, gender, sexual orientation, religion, race, ethnicity, and accommodation needs\n
+•	Usage data, such as your IP address, device type, and in-app browsing behavior\n
+•	Review data on businesses you visit\n
+•	Other information that you voluntarily provide to us\n
+
+\n\nHow We Use Your Information\n
+
+\nWe use your personal information for the following purposes:\n
+•	To provide and improve our services\n
+•	To communicate with you about our services and updates\n
+•	To personalize your experience with our services\n
+•	To conduct research and analysis to improve our services and user experience\n
+•	To compile user demographics for improving business performance\n
+•	To comply with legal obligations and protect our rights\n
+
+\n\nInformation Sharing and Disclosure\n
+
+\nWe do not share your personal information with third parties except as necessary to provide our services, as required by law, or as described in this policy. We may share your information with the following types of third parties:\n
+
+•	Service providers that help us with our business operations, such as email providers, authentication services, and analytics companies\n
+•	Welcomed Here, Inc. with whom we have joint business operations agreements for marketing\n
+•	Law enforcement agencies, regulators, and other government entities as required by law or to protect our rights\n
+
+\n\nData Security\n
+
+\nWe take reasonable measures to protect your personal information from unauthorized access, disclosure, or destruction. We use encryption, password protection, and other security measures to safeguard your data.\n
+
+\n\nYour Rights and Choices\n
+
+\nYou have the following rights with respect to your personal information:\n
+
+\nThe right to access, correct, and delete your personal information\n
+\nThe right to opt-out of receiving marketing communications from us\n
+\nThe right to object to or restrict our processing of your personal information\n
+\nThe right to withdraw your consent to our processing of your personal information\n
+\nWe provide you with the ability to exercise these rights through our website and mobile app. If you need assistance, please contact us at supurrinnovations.com\n
+
+\n\nChanges to this Policy\n
+
+\nWe may update this data privacy policy from time to time to reflect changes in our business practices or legal requirements. We will notify you of any material changes to this policy by email or by posting a notice on our website or mobile app.\n
+
+\nContact Us\n
+
+\nIf you have any questions or concerns about this data privacy policy or our data handling practices, please contact us at supurrinnovations.com.\n
+</string>
+    <string name="welcomed">welcomed.</string>
+    <string name="agree">agree</string>
+    <string name="decline">decline</string>
+    <string name="data_privacy_policy">Data Privacy Policy</string>
+    <string name="name">Name</string>
+    <string name="good_traits">good traits</string>
+    <string name="bad_traits">bad traits</string>
+    <string name="comment_goes_here">comment goes here...................................................................................................................................................................................................................................................</string>
+    <string name="trait">trait</string>
+    <string name="x">x</string>
+    <string name="preferences_title">preferences</string>
+    <string name="financial">financial</string>
+    <string name="extras">extras</string>
+    <string name="sensorytitle">sensory</string>
+    <string name="interpreters">interpreters</string>
+    <string name="communicationtitle">communication</string>
+    <string name="business_ownership">business ownership</string>
+    <string name="symbolstitle">symbols</string>
+
+</resources>

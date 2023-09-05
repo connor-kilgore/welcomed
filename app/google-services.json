@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1085624984120",
+    "project_id": "welcomed-45911",
+    "storage_bucket": "welcomed-45911.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085624984120:android:efb0e67b6c7eede174fccd",
+        "android_client_info": {
+          "package_name": "org.welcomedhere.welcomed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1085624984120-b8q47jutk0eig585gl5eo3rimsv60ush.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD04bfps0PXFL8c6H_Vj_LfWdJ2x7fSyns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085624984120-b8q47jutk0eig585gl5eo3rimsv60ush.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

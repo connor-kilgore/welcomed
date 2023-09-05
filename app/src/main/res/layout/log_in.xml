@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background">
+
+    <!-- constraints are used to define the relationships between the views in a user interface
+    and determine their position and size relative to each other. The main purpose of using constraints is to provide a
+    flexible and adaptive layout that can automatically adjust to different screen sizes and
+    orientations. -->
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="237dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="73dp"
+        android:background="@drawable/input_bubble"
+        android:fontFamily="@font/dyslexie"
+        android:gravity="center"
+        android:hint="password"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="182dp"
+        android:layout_height="53dp"
+        android:background="@drawable/button_background"
+        android:text="log in"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.904" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="215dp"
+        android:layout_height="275dp"
+        android:layout_marginStart="89dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="89dp"
+        android:layout_marginBottom="310dp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.038"
+        app:srcCompat="@drawable/welcomed_logo" />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="237dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="73dp"
+        android:background="@drawable/input_bubble"
+        android:fontFamily="@font/dyslexie"
+        android:gravity="center"
+        android:hint="phone number"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
