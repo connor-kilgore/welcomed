@@ -20,17 +20,13 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.android.material.appbar.MaterialToolbar;
 
-
-import org.w3c.dom.Text;
 import org.welcomedhere.welcomed.data.ProfileManager;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -46,9 +42,14 @@ public class PreferencesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-        MaterialToolbar toolbar = findViewById(R.id.materialToolbar_maps2);
+
+        // set top toolbar properties
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView title = findViewById(R.id.title);
+        title.setText("preferences");
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // get pre-existing trait preferences

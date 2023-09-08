@@ -29,7 +29,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        final Button sendEmail = this.findViewById(R.id.sendReset);
+        final Button sendEmail = this.findViewById(R.id.sendEmail);
         final TextView login = (TextView) this.findViewById(R.id.login);
         final EditText emailEditText = this.findViewById(R.id.email);
 
