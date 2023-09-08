@@ -1,7 +1,9 @@
 package org.welcomedhere.welcomed;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.app.Activity;
@@ -15,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -30,9 +31,7 @@ import android.widget.Toast;
 import org.welcomedhere.welcomed.data.ProfileManager;
 import org.welcomedhere.welcomed.ui.login.LoginActivity;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
@@ -46,13 +45,20 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navbar_profile2);
+        // set bottom nav bar properties
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        MaterialToolbar toolbar = findViewById(R.id.materialToolbar_maps2);
+
+        // set top toolbar properties
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView title = findViewById(R.id.title);
+        title.setText("profile");
 
+
+        // force portrait mode
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // gender?
         Spinner genderSpinner = findViewById(R.id.gender_spinner2);

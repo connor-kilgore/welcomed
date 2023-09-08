@@ -1,82 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:id="@+id/scroll_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".PreferencesActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
+    <RelativeLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        tools:context=".PreferencesActivity"
+        app:layout_constraintTop_toTopOf="parent">
 
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/materialToolbar_maps2"
-            android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:layout_margin="0px"
-            android:background="?attr/colorPrimary"
-            android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="" />
-
-        <TextView
-            android:id="@+id/profile_page_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/dyslexie"
-            android:text="@string/preferences_title"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tile_divider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.35" />
-
-        <View
-            android:id="@+id/tile_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="44dp"
-            android:background="#FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/materialToolbar_maps2" />
-
+        <include layout="@layout/toolbar"/>
 
         <TextView
             android:id="@+id/preferences_identifier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/dyslexie"
             android:text="@string/preferences"
             android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/preferences_form"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/toolbar"/>
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/preferences_form"
             android:layout_width="316dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:background="@drawable/input_purple_outline"
             android:fontFamily="@font/dyslexie"
             android:gravity="center"
@@ -88,32 +47,8 @@
             android:textStyle="bold"
             app:alignContent="flex_start"
             app:flexWrap="wrap"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.17000002" />
-
-        <Button
-            android:id="@+id/add_trait"
-            android:layout_width="205dp"
-            android:layout_height="48dp"
-            android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/purple_button"
-            android:fontFamily="@font/dyslexie"
-            android:text="@string/add_trait"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/preferences_form"
-            app:layout_constraintVertical_bias="0.01999998" />
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/preferences_identifier"/>
 
         <TextView
             android:id="@+id/trait_counter"
@@ -124,30 +59,42 @@
             android:textColor="#8E8E8E"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/save_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.885"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/preferences_form"
-            app:layout_constraintVertical_bias="0.002" />
+            android:layout_alignEnd="@id/preferences_form"
+            android:layout_below="@id/preferences_form"/>
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/add_trait"
             android:layout_width="205dp"
             android:layout_height="48dp"
             android:layout_gravity="start"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/purple_button"
             android:fontFamily="@font/dyslexie"
-            android:text="@string/save_button"
+            android:text="@string/add_trait"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/preferences_form"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
-</ScrollView>
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="205dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/purple_button"
+        android:fontFamily="@font/dyslexie"
+        android:text="@string/save_button"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,26 +1,20 @@
 package org.welcomedhere.welcomed;
 
-import static java.lang.Thread.sleep;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.icu.text.SymbolTable;
 import android.location.LocationManager;
 import android.os.Looper;
-import android.widget.SearchView;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -40,13 +34,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -56,37 +46,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.maps.GeoApiContext;
-import com.google.maps.PendingResult;
-import com.google.maps.TextSearchRequest;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.PlacesSearchResponse;
-import com.google.maps.model.PlacesSearchResult;
 
 
-import org.jetbrains.annotations.Nullable;
 import org.welcomedhere.welcomed.data.ProfileManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class MapsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         OnMapReadyCallback {
 
     // maximum number of places to search
-    private static final int M_MAX_ENTRIES = 3;
     private GoogleMap map;
-    private CameraPosition cameraPosition;
     private PlacesClient placesClient;
     private GeoApiContext apiContext;
 
@@ -98,28 +75,11 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
     private static final String TAG = MapsActivity.class.getSimpleName();
 
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private final int loadingScreen =-1;
-
-    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
 
     private Location lastKnownLocation;
 
-    private com.google.maps.model.LatLng lastMapLocation;
-
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
-
-    private String[] likelyPlaceNames;
-    private String[] likelyPlaceAddresses;
-    private String[] likelyPlaceIDs;
-    private List[] likelyPlaceAttributions;
-    private String[] LikelyPlaceInfo;
-    private com.google.maps.model.LatLng[] likelyPlaceLatLngs;
     private boolean locationPermissionGranted;
-    private String searchString="Northern Arizona University";
     protected static final String apiKey = "AIzaSyDKAAE9roCSy-Kifb3a774-vabVEr3gl3s";
-
-    AlertDialog pleaseWait;
 
     private LatLng lastKnownLatLng;
 
@@ -140,16 +100,19 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        //
-        MaterialToolbar toolbar = findViewById(R.id.materialToolbar_maps);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navbar_maps);
+        // set bottom nav bar properties
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        // set top toolbar properties
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView title = findViewById(R.id.title);
+        title.setText("profile");
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
         GeoApiContext.Builder apiContextBuilder = new GeoApiContext.Builder();
@@ -179,7 +142,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         autoCompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
-                System.out.println(place.getLatLng());
                 openPlacesDialog(place);
             }
 
@@ -288,7 +250,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         // Prompt the user for permission.
         getLocationPermission();
-        System.out.println(locationPermissionGranted);
+
         // [END_EXCLUDE]
 
         // Turn on the My Location layer and the related control on the map.
