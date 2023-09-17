@@ -2,6 +2,8 @@ package org.welcomedhere.welcomed;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -27,11 +29,17 @@ import com.google.android.flexbox.FlexboxLayout;
 import org.welcomedhere.welcomed.data.ProfileManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PreferencesActivity extends AppCompatActivity {
 
     ArrayList<String> traitTypes;
 
+    public static final String PREFERENCE_DATA = "preference_data";
+    public static final String PREFERENCES_KEY = "preferences_key";
+    SharedPreferences preferenceData;
+    Set<String> preferenceSet;
     int numTraitsSelected = 0;
 
     ProfileManager manager = new ProfileManager();
@@ -54,7 +62,29 @@ public class PreferencesActivity extends AppCompatActivity {
 
         // get pre-existing trait preferences
         usr.op = User.operation.GET_PREFERENCES;
-        ArrayList<String> preferences = (ArrayList<String>) new Client(usr, "").getObjectFromServer();
+
+        // get stored data
+        preferenceData = getSharedPreferences(PREFERENCE_DATA, Context.MODE_PRIVATE);
+
+        // get internally stored preferences
+        preferenceSet = preferenceData.getStringSet(PREFERENCES_KEY, null);
+
+        ArrayList<String> preferences;
+
+        // check if preferences exist internally
+        if(preferenceSet != null)
+        {
+            preferences = new ArrayList<>();
+            // convert to a string array
+            for(String preference : preferenceSet)
+            {
+                preferences.add(preference);
+            }
+        }
+        else
+        {
+            preferences = (ArrayList<String>) new Client(usr, "").getObjectFromServer();
+        }
 
         // get traits box
         FlexboxLayout traits = findViewById(R.id.preferences_form);
@@ -96,6 +126,24 @@ public class PreferencesActivity extends AppCompatActivity {
                 usr.preferences = traitList;
                 Client client = new Client(usr, "updatePreferences");
                 client.start();
+
+                // add them to internal storage as well
+                if(preferenceSet != null)
+                {
+                    preferenceSet.clear();
+                }
+                else
+                {
+                    preferenceSet = new HashSet<>();
+                }
+
+                preferenceSet.addAll(traitList);
+
+                SharedPreferences.Editor editor = preferenceData.edit();
+
+                editor.putStringSet(PREFERENCES_KEY, preferenceSet);
+
+                editor.apply();
             }
         });
     }
@@ -195,8 +243,6 @@ public class PreferencesActivity extends AppCompatActivity {
                     // check that trait does not already exist
                     if(!selectedTraits.contains(adapter[0].getItem(position)))
                     {
-                        selectedTraits.add(adapter[0].getItem(position));
-
                         addTraitXML(traitBox, adapter[0].getItem(position), traitCounter, selectedTraits);
                     }
                     // Dismiss dialog
@@ -208,6 +254,9 @@ public class PreferencesActivity extends AppCompatActivity {
 
     private void addTraitXML(FlexboxLayout traitBox, String item, TextView traitCounter, ArrayList<String> selectedTraits)
     {
+        // add to selected traits
+        selectedTraits.add(item);
+
         // add the view into the xml file
         View traitView = getLayoutInflater().inflate(R.layout.trait_pop_up, null);
         traitBox.addView(traitView);

@@ -1,12 +1,13 @@
 package org.welcomedhere.welcomed;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -35,6 +36,16 @@ import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
+    // constants for preferences variables
+    public static final String USER_DATA = "user_data";
+    public static final String NAME_KEY = "name_key";
+    public static final String GENDER_KEY = "gender_key";
+    public static final String RACE_KEY = "race_key";
+    public static final String SO_KEY = "so_key";
+    public static final String INCLUSION_KEY = "inclusion_key";
+    public static final String ANON_KEY = "anon_key";
+    SharedPreferences userdata;
+
     private Button saveBtn;
     private Button logoutBtn;
 
@@ -60,89 +71,117 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
         // force portrait mode
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        // gender?
+        // gender
         Spinner genderSpinner = findViewById(R.id.gender_spinner2);
         ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this,
                 R.array.gender_options, R.layout.spinner_item);
         genderAdapter.setDropDownViewResource(R.layout.dropdown_options);
         genderSpinner.setAdapter(genderAdapter);
 
-        // post anonymously?
-        Spinner yesNoSpinner = findViewById(R.id.anon_spinner);
+        // post anonymously
+        Spinner anonSpinner = findViewById(R.id.anon_spinner);
         ArrayAdapter<CharSequence> yesNoAdapter = ArrayAdapter.createFromResource(this,
                 R.array.yes_or_no, R.layout.spinner_item);
         yesNoAdapter.setDropDownViewResource(R.layout.dropdown_options);
-        yesNoSpinner.setAdapter(yesNoAdapter);
+        anonSpinner.setAdapter(yesNoAdapter);
 
-        // sexual orientation?
+        // sexual orientation
         Spinner sexualOrientationSpinner = findViewById(R.id.SO_spinner);
         ArrayAdapter<CharSequence> sexualOrientationAdapter = ArrayAdapter.createFromResource(this,
                 R.array.sexual_orientation_options, R.layout.spinner_item);
         sexualOrientationAdapter.setDropDownViewResource(R.layout.dropdown_options);
         sexualOrientationSpinner.setAdapter(sexualOrientationAdapter);
 
-        // race?
+        // race
         Spinner ethnicitySpinner = findViewById(R.id.ethnicity_spinner);
         ArrayAdapter<CharSequence> ethnicityAdapter = ArrayAdapter.createFromResource(this,
                 R.array.ethnicity_options, R.layout.spinner_item);
         ethnicityAdapter.setDropDownViewResource(R.layout.dropdown_options);
         ethnicitySpinner.setAdapter(ethnicityAdapter);
 
-        // inclusion supports?
+        // inclusion supports
         Spinner abilitiesSpinner = findViewById(R.id.disability_spinner);
         ArrayAdapter<CharSequence> abilitiesAdapter = ArrayAdapter.createFromResource(this,
                 R.array.abilities_options, R.layout.spinner_item);
         abilitiesAdapter.setDropDownViewResource(R.layout.dropdown_options);
         abilitiesSpinner.setAdapter(abilitiesAdapter);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        // get stored data
+        userdata = getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
 
-        // Check if this user has already created a profile
-        // if so, we'll fill out the fields for them
-        User existing = ProfileManager.retrieveUser(mAuth.getUid());
+        // get all internally stored values
+        String name = userdata.getString(NAME_KEY, null);
+        String gender = userdata.getString(GENDER_KEY, null);
+        String race = userdata.getString(RACE_KEY, null);
+        String so = userdata.getString(SO_KEY, null);
+        String inclusion = userdata.getString(INCLUSION_KEY, null);
+        String anon = userdata.getString(ANON_KEY, null);
 
-        if (existing != null) {
+        //System.out.println(name + ", " + gender + ", " + race + ", " + so + ", " + inclusion + ", " + anon);
 
-            // set the user name
-            ((EditText) findViewById(R.id.name_field)).setText(existing.name);
+        // check if these values exist
+        if(name != null && gender != null && race != null && so != null && inclusion != null && anon != null)
+        {
+            // set them
+            ((EditText)findViewById(R.id.name_field)).setText(name);
+            genderSpinner.setSelection(getIndex(genderSpinner, gender));
+            ethnicitySpinner.setSelection(getIndex(ethnicitySpinner, race));
+            sexualOrientationSpinner.setSelection(getIndex(sexualOrientationSpinner, so));
+            abilitiesSpinner.setSelection(getIndex(abilitiesSpinner, inclusion));
+            anonSpinner.setSelection(getIndex(anonSpinner, anon));
+        }
+        // if values don't exist, attempt to retrieve from database
+        else
+        {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-            // get the users descriptors
-            existing.op = User.operation.GET_DESCRIPTORS;
-            existing.descriptors = (ArrayList<Descriptor>) new Client(existing, "").getObjectFromServer();
+            // Check if this user has already created a profile
+            // if so, we'll fill out the fields for them
+            User existing = ProfileManager.retrieveUser(mAuth.getUid());
+
+            // check that user exists in database
+            if (existing != null) {
+
+                // set the user name
+                ((EditText) findViewById(R.id.name_field)).setText(existing.name);
+
+                // get the users descriptors
+                existing.op = User.operation.GET_DESCRIPTORS;
+                existing.descriptors = (ArrayList<Descriptor>) new Client(existing, "").getObjectFromServer();
 
 
-            // check that descriptors is not null
-            if(existing.descriptors != null)
-            {
-                // if so, populate the spinners
-                for(int index = 0; index < existing.descriptors.size(); index++)
+                // check that descriptors is not null
+                if(existing.descriptors != null)
                 {
+                    // if so, populate the spinners
+                    for(int index = 0; index < existing.descriptors.size(); index++)
+                    {
 
-                    // check for descriptor type
-                    if(existing.descriptors.get(index).descriptorType.equals("gender"))
-                    {
-                        genderSpinner.setSelection(getIndex(genderSpinner, existing.descriptors.get(index).descriptor));
-                    }
-                    else if(existing.descriptors.get(index).descriptorType.equals("race"))
-                    {
-                        ethnicitySpinner.setSelection(getIndex(ethnicitySpinner, existing.descriptors.get(index).descriptor));
-                    }
-                    else if(existing.descriptors.get(index).descriptorType.equals("sexual orientation"))
-                    {
-                        sexualOrientationSpinner.setSelection(getIndex(sexualOrientationSpinner, existing.descriptors.get(index).descriptor));
-                    }
-                    else if(existing.descriptors.get(index).descriptorType.equals("inclusion supports"))
-                    {
-                        abilitiesSpinner.setSelection(getIndex(abilitiesSpinner, existing.descriptors.get(index).descriptor));
-                    }
-                    else if(existing.descriptors.get(index).descriptorType.equals("anonymous"))
-                    {
-                        yesNoSpinner.setSelection(getIndex(yesNoSpinner, existing.descriptors.get(index).descriptor));
+                        // check for descriptor type
+                        if(existing.descriptors.get(index).descriptorType.equals("gender"))
+                        {
+                            genderSpinner.setSelection(getIndex(genderSpinner, existing.descriptors.get(index).descriptor));
+                        }
+                        else if(existing.descriptors.get(index).descriptorType.equals("race"))
+                        {
+                            ethnicitySpinner.setSelection(getIndex(ethnicitySpinner, existing.descriptors.get(index).descriptor));
+                        }
+                        else if(existing.descriptors.get(index).descriptorType.equals("sexual orientation"))
+                        {
+                            sexualOrientationSpinner.setSelection(getIndex(sexualOrientationSpinner, existing.descriptors.get(index).descriptor));
+                        }
+                        else if(existing.descriptors.get(index).descriptorType.equals("inclusion supports"))
+                        {
+                            abilitiesSpinner.setSelection(getIndex(abilitiesSpinner, existing.descriptors.get(index).descriptor));
+                        }
+                        else if(existing.descriptors.get(index).descriptorType.equals("anonymous"))
+                        {
+                            anonSpinner.setSelection(getIndex(anonSpinner, existing.descriptors.get(index).descriptor));
+                        }
                     }
                 }
             }
         }
-
 
         // set the saveBtn
         saveBtn = (Button) findViewById(R.id.save_button);
@@ -156,7 +195,6 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
             public void onClick(View view) {
                 // get the user info from filled in fields
                 User newUser = buildUserFromEntries();
-
                 User result = ProfileManager.updateUser(newUser);
 
                 if (result == null || result.op != User.operation.ADD_SUCCESS) {
@@ -166,6 +204,19 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
                     Toast.makeText(ProfileActivity.this,
                             "Profile updated successfully!", Toast.LENGTH_LONG);
                 }
+
+                // save into shared preferences userdata
+                SharedPreferences.Editor editor = userdata.edit();
+
+                editor.putString(NAME_KEY, ((EditText)findViewById(R.id.name_field)).getText().toString());
+                editor.putString(GENDER_KEY, genderSpinner.getSelectedItem().toString());
+                editor.putString(RACE_KEY, ethnicitySpinner.getSelectedItem().toString());
+                editor.putString(SO_KEY, sexualOrientationSpinner.getSelectedItem().toString());
+                editor.putString(INCLUSION_KEY, abilitiesSpinner.getSelectedItem().toString());
+                editor.putString(ANON_KEY, anonSpinner.getSelectedItem().toString());
+
+                // apply saved values
+                editor.apply();
             }
         });
 
