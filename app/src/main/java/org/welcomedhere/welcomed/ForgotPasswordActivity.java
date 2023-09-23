@@ -19,8 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.welcomedhere.welcomed.ui.login.LoginActivity;
-
 public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
