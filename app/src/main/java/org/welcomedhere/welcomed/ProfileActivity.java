@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 
 import org.welcomedhere.welcomed.data.ProfileManager;
-import org.welcomedhere.welcomed.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -313,29 +312,20 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
 
 
     private User buildUserFromEntries() {
-        User newUser;
-        String userID, userEmail, userName;
-
+        // get current user data
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        userID = mAuth.getUid();
-        userEmail = mAuth.getCurrentUser().getEmail();
+        User newUser = ProfileManager.retrieveUser(mAuth.getUid());
 
-        userName = ((EditText)findViewById(R.id.name_field))
+        String userName = ((EditText)findViewById(R.id.name_field))
                 .getText()
                 .toString();
 
-        newUser = new User(userID, userName, userEmail);
+        // apply descriptors for each category
         newUser.descriptors = new ArrayList<Descriptor>();
-
-        // add gender descriptor
         newUser.descriptors.add(new Descriptor(((Spinner)findViewById(R.id.gender_spinner2)).getSelectedItem().toString(), "gender"));
-        // add race descriptor
         newUser.descriptors.add(new Descriptor(((Spinner)findViewById(R.id.ethnicity_spinner)).getSelectedItem().toString(), "race"));
-        // add sexual orientation descriptor
         newUser.descriptors.add(new Descriptor(((Spinner)findViewById(R.id.SO_spinner)).getSelectedItem().toString(), "sexual orientation"));
-        // add inclusion support descriptors
         newUser.descriptors.add(new Descriptor(((Spinner)findViewById(R.id.disability_spinner)).getSelectedItem().toString(), "inclusion supports"));
-        // add anonymous descriptor
         newUser.descriptors.add(new Descriptor(((Spinner)findViewById(R.id.anon_spinner)).getSelectedItem().toString(), "anonymous"));
 
         return newUser;

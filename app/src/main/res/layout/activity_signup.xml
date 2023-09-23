@@ -70,6 +70,24 @@
         android:layout_below="@id/first_name"
         android:layout_centerHorizontal="true"/>
 
+    <EditText
+        android:id="@+id/confirm_password"
+        android:layout_width="248dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:autofillHints="password"
+        android:background="@drawable/input_bubble"
+        android:fontFamily="@font/dyslexie"
+        android:gravity="center"
+        android:hint="confirm password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@id/password"
+        android:layout_centerHorizontal="true"/>
+
     <RelativeLayout
         android:id="@+id/bottom"
         android:layout_width="match_parent"
