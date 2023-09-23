@@ -78,8 +78,11 @@
                 android:layout_centerHorizontal="true"/>
 
             <Button
+                android:id="@+id/learnMore"
                 android:layout_width="221dp"
                 android:layout_height="53dp"
+                android:layout_below="@id/font_info"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="start"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="32dp"
@@ -87,9 +90,7 @@
                 android:fontFamily="@font/dyslexie"
                 android:text="learn more"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:layout_below="@id/font_info"
-                android:layout_centerHorizontal="true" />
+                android:textColor="#FFFFFF" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
