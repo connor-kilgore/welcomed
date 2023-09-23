@@ -1,7 +1,7 @@
 package org.welcomedhere.welcomed;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import org.welcomedhere.welcomed.data.ProfileManager;
 import org.welcomedhere.welcomed.models.ReviewModel;
@@ -47,8 +46,12 @@ public class ReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
 
-        MaterialToolbar toolbar = findViewById(R.id.materialToolbar_maps2);
+        // set top toolbar properties
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView title = findViewById(R.id.title);
+        title.setText("review");
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -110,7 +110,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView title = findViewById(R.id.title);
-        title.setText("profile");
+        title.setText("map");
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
