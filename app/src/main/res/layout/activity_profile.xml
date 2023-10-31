@@ -122,6 +122,7 @@
                                     android:fontFamily="@font/dyslexie"
                                     android:hint="@string/name_spinner_hint"
                                     android:inputType="textPersonName"
+                                    android:imeOptions="actionDone"
                                     android:maxLines="1"
                                     android:textSize="13sp"
                                     android:layout_centerHorizontal="true"
