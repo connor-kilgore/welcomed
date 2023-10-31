@@ -45,7 +45,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // get businessData from previous page
-        businessData=new Business(getIntent().getStringExtra("businessInfo"));
+        businessData = new Business(getIntent().getStringExtra("businessInfo"));
 
         AppCompatButton leaveFeedbackButton = findViewById(R.id.decline);
         leaveFeedbackButton.setOnClickListener(new View.OnClickListener() {
@@ -107,195 +107,166 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
             {
                 ProfileManager manager = new ProfileManager();
 
-                // alter the new review to match review data
-                User user = manager.retrieveUser(reviews[index].userID);
-                // check that user returned is not null
-                if(user != null)
+                // add the review to the business review list
+                businessData.topReviews.add(reviews[index]);
+
+                // add the view into the xml file
+                View view = getLayoutInflater().inflate(R.layout.review_box, null);
+                linearLayout.addView(view);
+
+                // get the elements of the review box
+                TextView reviewBody = view.findViewById(R.id.textbox);
+                TextView date = view.findViewById(R.id.date);
+                TextView name = view.findViewById(R.id.name);
+                TextView karmaCount = view.findViewById(R.id.karma_count);
+
+                // get the current review's reviewID
+                reviews[index].request = DatabaseConstants.Request.GET_REVIEW_ID;
+                Client reviewClient = new Client(reviews[index], "getReviewID");
+                int reviewID = (int) reviewClient.getObjectFromServer();
+
+                // create a karma listing
+                KarmaListing listing = new KarmaListing(reviewID, reviews[index].businessID, manager.getCurrentUid());
+                listing.request = DatabaseConstants.Request.RETRIEVE;
+
+                // get karma listing data on review for current user
+                int userKarmaRating = (int) new Client(listing, "getKarma").getObjectFromServer();
+
+                ImageButton upVote = view.findViewById(R.id.upvote_button);
+                ImageButton downVote = view.findViewById(R.id.downvote_button);
+
+                // set buttons based on userKarmaRating
+                if(userKarmaRating == 0)
                 {
+                    upVote.setTag("unpressed");
+                    upVote.setImageResource(R.drawable.baseline_thumb_up_24);
+                    downVote.setTag("unpressed");
+                    downVote.setImageResource(R.drawable.baseline_thumb_down_24);
+                }
+                else if(userKarmaRating == 1)
+                {
+                    upVote.setTag("pressed");
+                    upVote.setImageResource(R.drawable.highlight_thumb_up_24);
+                    downVote.setTag("unpressed");
+                    downVote.setImageResource(R.drawable.baseline_thumb_down_24);
+                }
+                else
+                {
+                    upVote.setTag("unpressed");
+                    upVote.setImageResource(R.drawable.baseline_thumb_up_24);
+                    downVote.setTag("pressed");
+                    downVote.setImageResource(R.drawable.highlight_thumb_down_24);
+                }
 
-                    boolean anonymous = false;
-
-                    // check if user is an anonymous poster
-                    for(int inner = 0; inner < user.descriptors.size(); inner++)
+                // populate review box with traits
+                TextView traitReviewText = view.findViewById(R.id.good_trait_1);
+                for(int inner = 0; inner < reviews[index].traits.size(); inner++)
+                {
+                    traitReviewText.setText(traitReviewText.getText() + reviews[index].traits.get(inner));
+                    if(inner != reviews[index].traits.size() - 1)
                     {
-                        if(user.descriptors.get(inner).descriptorType.equals("anonymous"))
+                        traitReviewText.setText(traitReviewText.getText() + ", ");
+                    }
+                }
+
+                // get the reviews total karma
+                reviews[index].request = DatabaseConstants.Request.GET_REVIEW_KARMA;
+                final int[] totalReviewKarma = {(int) reviewClient.getObjectFromServer()};
+
+                // set total review karma into karmaCount text
+                karmaCount.setText(totalReviewKarma[0] + "");
+
+                // set appropriate username, text and date
+                reviewBody.setText(reviews[index].bodyText);
+                date.setText(reviews[index].date);
+                name.setText(reviews[index].name);
+
+                // set onclicklisteners for the upvote and downvote buttons
+                int finalIndex = index;
+
+                upVote.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(upVote.getTag() == "unpressed")
                         {
-                            if(user.descriptors.get(inner).descriptor.equals("Yes"))
+                            upVote.setTag("pressed");
+                            upVote.setImageResource(R.drawable.highlight_thumb_up_24);
+                            totalReviewKarma[0]++;
+
+                            if(downVote.getTag() == "pressed")
                             {
-                                anonymous = true;
-                            }
-                        }
-                    }
-
-                    // add the review to the business review list
-                    businessData.topReviews.add(reviews[index]);
-
-                    // add the view into the xml file
-                    View view = getLayoutInflater().inflate(R.layout.review_box, null);
-                    linearLayout.addView(view);
-
-                    // get the elements of the review box
-                    TextView reviewBody = view.findViewById(R.id.textbox);
-                    TextView date = view.findViewById(R.id.date);
-                    TextView name = view.findViewById(R.id.name);
-                    TextView karmaCount = view.findViewById(R.id.karma_count);
-
-                    // get the current review's reviewID
-                    reviews[index].request = DatabaseConstants.Request.GET_REVIEW_ID;
-                    Client reviewClient = new Client(reviews[index], "getReviewID");
-                    int reviewID = (int) reviewClient.getObjectFromServer();
-
-                    // create a karma listing
-                    KarmaListing listing = new KarmaListing(reviewID, reviews[index].businessID, manager.getCurrentUid());
-                    listing.request = DatabaseConstants.Request.RETRIEVE;
-
-                    // get karma listing data on review for current user
-                    int userKarmaRating = (int) new Client(listing, "getKarma").getObjectFromServer();
-
-                    ImageButton upVote = view.findViewById(R.id.upvote_button);
-                    ImageButton downVote = view.findViewById(R.id.downvote_button);
-
-                    // set buttons based on userKarmaRating
-                    if(userKarmaRating == 0)
-                    {
-                        upVote.setTag("unpressed");
-                        upVote.setImageResource(R.drawable.baseline_thumb_up_24);
-                        downVote.setTag("unpressed");
-                        downVote.setImageResource(R.drawable.baseline_thumb_down_24);
-                    }
-                    else if(userKarmaRating == 1)
-                    {
-                        upVote.setTag("pressed");
-                        upVote.setImageResource(R.drawable.highlight_thumb_up_24);
-                        downVote.setTag("unpressed");
-                        downVote.setImageResource(R.drawable.baseline_thumb_down_24);
-                    }
-                    else
-                    {
-                        upVote.setTag("unpressed");
-                        upVote.setImageResource(R.drawable.baseline_thumb_up_24);
-                        downVote.setTag("pressed");
-                        downVote.setImageResource(R.drawable.highlight_thumb_down_24);
-                    }
-
-                    // populate review box with traits
-                    TextView traitReviewText = view.findViewById(R.id.good_trait_1);
-                    for(int inner = 0; inner < reviews[index].traits.size(); inner++)
-                    {
-                        traitReviewText.setText(traitReviewText.getText() + reviews[index].traits.get(inner));
-                        if(inner != reviews[index].traits.size() - 1)
-                        {
-                            traitReviewText.setText(traitReviewText.getText() + ", ");
-                        }
-                    }
-
-                    // get the reviews total karma
-                    reviews[index].request = DatabaseConstants.Request.GET_REVIEW_KARMA;
-                    final int[] totalReviewKarma = {(int) reviewClient.getObjectFromServer()};
-
-                    // set total review karma into karmaCount text
-                    karmaCount.setText(totalReviewKarma[0] + "");
-
-                    // set appropriate username, text and date
-                    reviewBody.setText(reviews[index].bodyText);
-                    date.setText(reviews[index].date);
-                    if(anonymous)
-                    {
-                        name.setText("anonymous");
-                    }
-                    else
-                    {
-                        name.setText(user.name);
-                    }
-
-                    // set onclicklisteners for the upvote and downvote buttons
-                    int finalIndex = index;
-
-                    upVote.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if(upVote.getTag() == "unpressed")
-                            {
-                                upVote.setTag("pressed");
-                                upVote.setImageResource(R.drawable.highlight_thumb_up_24);
+                                downVote.setTag("unpressed");
+                                downVote.setImageResource(R.drawable.baseline_thumb_down_24);
                                 totalReviewKarma[0]++;
-
-                                if(downVote.getTag() == "pressed")
-                                {
-                                    downVote.setTag("unpressed");
-                                    downVote.setImageResource(R.drawable.baseline_thumb_down_24);
-                                    totalReviewKarma[0]++;
-                                }
-
-                                listing.request = DatabaseConstants.Request.UPVOTE;
                             }
-                            // otherwise, assume it is pressed
-                            else
+
+                            listing.request = DatabaseConstants.Request.UPVOTE;
+                        }
+                        // otherwise, assume it is pressed
+                        else
+                        {
+                            upVote.setTag("unpressed");
+                            upVote.setImageResource(R.drawable.baseline_thumb_up_24);
+                            totalReviewKarma[0]--;
+
+                            listing.request = DatabaseConstants.Request.REMOVE_VOTE;
+                        }
+
+                        // initialize client class
+                        Client client = new Client(listing, "updateKarma");
+
+                        // set total review karma into karmaCount text
+                        karmaCount.setText(totalReviewKarma[0] + "");
+
+                        // run client entry on separate thread
+                        client.start();
+                    }
+                });
+
+                downVote.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(downVote.getTag() == "unpressed")
+                        {
+                            downVote.setTag("pressed");
+                            downVote.setImageResource(R.drawable.highlight_thumb_down_24);
+                            totalReviewKarma[0]--;
+
+                            if(upVote.getTag() == "pressed")
                             {
                                 upVote.setTag("unpressed");
                                 upVote.setImageResource(R.drawable.baseline_thumb_up_24);
                                 totalReviewKarma[0]--;
-
-                                listing.request = DatabaseConstants.Request.REMOVE_VOTE;
                             }
 
-                            // initialize client class
-                            Client client = new Client(listing, "updateKarma");
-
-                            // set total review karma into karmaCount text
-                            karmaCount.setText(totalReviewKarma[0] + "");
-
-                            // run client entry on separate thread
-                            client.start();
+                            listing.request = DatabaseConstants.Request.DOWNVOTE;
                         }
-                    });
+                        // otherwise, assume it is pressed
+                        else
+                        {
+                            downVote.setImageResource(R.drawable.baseline_thumb_down_24);
+                            downVote.setTag("unpressed");
+                            totalReviewKarma[0]++;
 
-                    downVote.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if(downVote.getTag() == "unpressed")
-                            {
-                                downVote.setTag("pressed");
-                                downVote.setImageResource(R.drawable.highlight_thumb_down_24);
-                                totalReviewKarma[0]--;
-
-                                if(upVote.getTag() == "pressed")
-                                {
-                                    upVote.setTag("unpressed");
-                                    upVote.setImageResource(R.drawable.baseline_thumb_up_24);
-                                    totalReviewKarma[0]--;
-                                }
-
-                                listing.request = DatabaseConstants.Request.DOWNVOTE;
-                            }
-                            // otherwise, assume it is pressed
-                            else
-                            {
-                                downVote.setImageResource(R.drawable.baseline_thumb_down_24);
-                                downVote.setTag("unpressed");
-                                totalReviewKarma[0]++;
-
-                                listing.request = DatabaseConstants.Request.REMOVE_VOTE;
-                            }
-
-                            // initialize client class
-                            Client client = new Client(listing, "updateKarma");
-
-                            karmaCount.setText(totalReviewKarma[0] + "");
-
-                            // run client entry on separate thread
-                            client.start();
+                            listing.request = DatabaseConstants.Request.REMOVE_VOTE;
                         }
-                    });
 
-                }
-                // TODO: delete the review if the user returned is null
+                        // initialize client class
+                        Client client = new Client(listing, "updateKarma");
+
+                        karmaCount.setText(totalReviewKarma[0] + "");
+
+                        // run client entry on separate thread
+                        client.start();
+                    }
+                });
+
             }
+                // TODO: delete the review if the user returned is null
         }
 
-
-        //set text for business name and address
-        TextView businessName= (TextView) findViewById(R.id.business_name);
+        // set text for business name and address
+        TextView businessName = (TextView) findViewById(R.id.business_name);
         businessName.setText(businessData.name);
         TextView businessAddress= (TextView) findViewById(R.id.business_address);
         businessAddress.setText(businessData.address);

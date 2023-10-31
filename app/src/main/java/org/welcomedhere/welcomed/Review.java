@@ -11,16 +11,19 @@ public class Review implements Serializable {
     public String userID;
     public String img_link;
     public String date;
+    public String name;
+    public boolean anonymous;
     public ArrayList<String> traits;
     public DatabaseConstants.Request request;
 
-    public Review(int businessID, String bodyText, String userID, String img_link, ArrayList<String> traits)
+    public Review(int businessID, String bodyText, String userID, String img_link, String date, boolean anonymous, ArrayList<String> traits)
     {
         this.businessID = businessID;
         this.bodyText = bodyText;
         this.userID = userID;
         this.img_link = img_link;
         this.date = date;
+        this.anonymous = anonymous;
         this.traits = traits;
     }
 
@@ -32,6 +35,7 @@ public class Review implements Serializable {
         this.userID = review.userID;
         this.img_link = review.img_link;
         this.date = review.date;
+        this.anonymous = review.anonymous;
         this.traits = new ArrayList<String>(review.traits);
     }
 

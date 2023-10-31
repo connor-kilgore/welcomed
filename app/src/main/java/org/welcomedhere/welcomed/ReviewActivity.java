@@ -1,10 +1,13 @@
 package org.welcomedhere.welcomed;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +31,10 @@ import org.welcomedhere.welcomed.models.ReviewModel;
 import java.util.ArrayList;
 
 public class ReviewActivity extends AppCompatActivity {
+
+    public static final String USER_DATA = "user_data"; // to get stored preferences
+    public static final String ANON_KEY = "anon_key"; // to get anonymous preference
+    SharedPreferences userdata;
     private Button saveBtn;
     private Button addBtn;
     private String businessID;
@@ -64,6 +71,13 @@ public class ReviewActivity extends AppCompatActivity {
             });
         }
 
+        // get stored data
+        userdata = getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
+        String anon = userdata.getString(ANON_KEY, null);
+        SwitchCompat anonSwitch = findViewById(R.id.toggle);
+        if(anon.equals("yes")) {
+            anonSwitch.setChecked(true);    // change state to true if anon is yes
+        }
 
         // get the business info of the place being reviewed
         Business businessData = new Business(getIntent().getStringExtra("businessInfo"));
@@ -117,7 +131,7 @@ public class ReviewActivity extends AppCompatActivity {
                 EditText edit = (EditText) findViewById(R.id.comment_holder);
 
                 // instantiate review class
-                review = new Review(businessData.businessID, edit.getText().toString(), manager.getCurrentUid(), "null", traitList);
+                review = new Review(businessData.businessID, edit.getText().toString(), manager.getCurrentUid(), "null", "", anonSwitch.isChecked(), traitList);
 
                 // initialize client class
                 Client client = new Client(review, "create");
