@@ -16,8 +16,13 @@ import android.widget.TextView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.slider.Slider;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+
+    private int distance = 1;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,6 +54,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
 
+        // find the slider and distance text by id
+        Slider distanceSlider = findViewById(R.id.distance_slider);
+        TextView distanceText = findViewById(R.id.miles_text);
+
+        // change running distance from
+        distanceSlider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                //Use the value
+                distance = (int) value;
+                distanceText.setText(distance + " mi");
+            }
+        });
     }
 
 
@@ -77,9 +95,4 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         int ID= v.getId();
         //todo add onclick handling for buttons
     }
-
-
-
-
-
 }
