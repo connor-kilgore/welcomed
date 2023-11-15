@@ -47,6 +47,6 @@ public class Review implements Serializable {
 
     public void printInfo()
     {
-        System.out.println("businessID: " + businessID + "\nbodyText: " + bodyText + "\nuserID: " + userID + "\nimg_link: " + img_link);
+        System.out.println("businessID: " + businessID + "\nbodyText: " + bodyText + "\nuserID: " + userID + "\nimg_link: " + img_link + "\nanonymous: " + anonymous);
     }
 }
