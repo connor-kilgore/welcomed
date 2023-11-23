@@ -28,11 +28,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import org.welcomedhere.welcomed.data.ProfileManager;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
@@ -316,12 +313,15 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
                 // apply saved values
                 editor.apply();
 
-                Client picSend = new Client(currentUri, "sendProfilePicture");
+                // create imageInfo with the uri and path
+                ImageInfo newProfilePic = new ImageInfo("profilePhotos/" + FirebaseAuth.getInstance().getUid() + ".jpg", currentUri);
+
+                Client picSend = new Client(newProfilePic, "SEND");
                 picSend.context = ProfileActivity.this;
                 picSend.start();
 
                 //you got image path, now you may use this
-                return;
+                break;
         }
     }
 

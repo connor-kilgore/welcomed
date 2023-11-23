@@ -8,11 +8,13 @@ import androidx.core.content.ContextCompat;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.welcomedhere.welcomed.data.ProfileManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -86,7 +89,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
                     layout.setBackground(ContextCompat.getDrawable(traitListPopup.getContext(), R.drawable.blue_button));
                 }
 
-                System.out.println(topTraits.get(index).trait + ", " + topTraits.get(index).value);
+                //System.out.println(topTraits.get(index).trait + ", " + topTraits.get(index).value);
             }
         }
 
@@ -180,6 +183,20 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
                 reviewBody.setText(reviews[index].bodyText);
                 date.setText(reviews[index].date);
                 name.setText(reviews[index].name);
+
+                // get the user profile picture for the review box
+                ImageView profilePicHolder = view.findViewById(R.id.profile_pic);
+                ImageInfo profilePic = new ImageInfo("profilePhotos/" + reviews[index].userID + ".jpg", null);
+                Client client = new Client(profilePic, "GET");
+                client.context = PlaceDetailsActivity.this;
+                File profilePicFile = client.getImageFromBucket(profilePic);
+                if(profilePicFile != null)
+                {
+                    // get the rotation from the profile pic and insert it as expected
+                    int rotation = ImageInfo.getCameraPhotoOrientation(profilePicFile.getAbsolutePath());
+                    profilePicHolder.setImageBitmap(BitmapFactory.decodeFile(profilePicFile.getAbsolutePath()));
+                    profilePicHolder.setRotation(rotation * -1);
+                }
 
                 // set onclicklisteners for the upvote and downvote buttons
                 int finalIndex = index;

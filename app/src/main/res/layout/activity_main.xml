@@ -30,9 +30,23 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/dyslexie"
-                android:text="discover"
+                android:text="what's near me?"
                 android:textColor="#000000"
                 android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/hint_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:fontFamily="@font/dyslexie"
+                android:text="select an image"
+                android:textColor="#000000"
+                android:layout_below="@id/discover_text"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"/>
 
@@ -47,7 +61,7 @@
                 android:textColor="@color/white"
                 android:textSize="13.1sp"
                 android:contentDescription="Food"
-                android:layout_below="@id/discover_text"
+                android:layout_below="@id/hint_text"
                 android:layout_toLeftOf="@+id/stores_button"/>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -59,7 +73,7 @@
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:contentDescription="Shops"
-                android:layout_below="@id/discover_text"
+                android:layout_below="@id/hint_text"
                 android:layout_centerHorizontal="true"/>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -71,7 +85,7 @@
                 android:background="@drawable/icon_bathroom"
                 android:textColor="@color/white"
                 android:contentDescription="Gyms"
-                android:layout_below="@id/discover_text"
+                android:layout_below="@id/hint_text"
                 android:layout_toRightOf="@+id/stores_button"/>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -113,7 +127,6 @@
                 android:layout_below="@id/drinks_button"
                 />
 
-
             <com.google.android.material.slider.Slider
                 android:id="@+id/distance_slider"
                 android:layout_below="@id/drinks_button"
@@ -133,6 +146,21 @@
                 android:background="#3070D0"
                 android:layout_below="@id/distance_slider" />
 
+            <Button
+                android:id="@+id/map_navigate"
+                android:layout_width="205dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/purple_button"
+                android:fontFamily="@font/dyslexie"
+                android:text="search nearby"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/separator"/>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/about_us_section"
                 android:layout_width="wrap_content"
@@ -151,7 +179,7 @@
                 app:layout_constraintHorizontal_bias="0.517"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/separator"/>
+                android:layout_below="@id/map_navigate"/>
         </RelativeLayout>
     </ScrollView>
 
