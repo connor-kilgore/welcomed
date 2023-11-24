@@ -25,8 +25,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.welcomedhere.welcomed.data.ProfileManager;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 public class PlaceDetailsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -181,7 +189,20 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
 
                 // set appropriate username, text and date
                 reviewBody.setText(reviews[index].bodyText);
-                date.setText(reviews[index].date);
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    LocalDateTime datetime = LocalDateTime.parse(reviews[index].date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    // Convert LocalDateTime to ZonedDateTime with UTC timezone
+                    ZonedDateTime zonedDateTimeUTC = datetime.atZone(ZoneId.of("UTC"));
+                    ZonedDateTime adjustedDateTime = zonedDateTimeUTC.withZoneSameInstant(TimeZone.getDefault().toZoneId());
+                    // format prettyTime data
+                    PrettyTime p = new PrettyTime();
+                    date.setText(p.format(Date.from(adjustedDateTime.toInstant())));
+                }
+                else {
+                    date.setText(reviews[index].date);
+                }
+
                 name.setText(reviews[index].name);
 
                 // get the user profile picture for the review box

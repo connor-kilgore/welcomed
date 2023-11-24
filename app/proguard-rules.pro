@@ -39,6 +39,8 @@
     java.lang.Object readResolve();
 }
 
+-keep class org.ocpsoft.prettytime.i18n.**
+
 -dontwarn okhttp3.internal.platform.**
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
