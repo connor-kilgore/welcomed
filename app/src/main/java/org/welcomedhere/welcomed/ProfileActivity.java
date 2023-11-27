@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import org.welcomedhere.welcomed.data.ProfileManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
@@ -116,6 +117,10 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
         String inclusion = userdata.getString(INCLUSION_KEY, null);
         String anon = userdata.getString(ANON_KEY, null);
         String uriStr = userdata.getString(IMAGE_KEY, null);
+
+        // set the welcome text
+        TextView welcomeText = findViewById(R.id.name);
+        welcomeText.setText("welcome " + name);
 
         //System.out.println(name + ", " + gender + ", " + race + ", " + so + ", " + inclusion + ", " + anon);
 

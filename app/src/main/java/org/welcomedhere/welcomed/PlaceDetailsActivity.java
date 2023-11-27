@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -217,6 +218,30 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
                     int rotation = ImageInfo.getCameraPhotoOrientation(profilePicFile.getAbsolutePath());
                     profilePicHolder.setImageBitmap(BitmapFactory.decodeFile(profilePicFile.getAbsolutePath()));
                     profilePicHolder.setRotation(rotation * -1);
+                }
+
+                // check if the review has a photo
+                if(reviews[index].hasImg)
+                {
+                    ImageView reviewPicHolder = view.findViewById(R.id.review_photo);
+                    ImageInfo reviewPic = new ImageInfo("reviewPhotos/" + reviews[index].businessID + "_" + reviews[index].userID + ".jpg", null);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(316, 316);
+
+                    // set image view dimensions
+                    int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 316, getResources().getDisplayMetrics());
+                    reviewPicHolder.requestLayout();
+                    reviewPicHolder.getLayoutParams().height = dimensionInDp;
+
+                    Client getReviewPicThread = new Client(profilePic, "GET");
+                    client.context = PlaceDetailsActivity.this;
+                    File ReviewPicFile = client.getImageFromBucket(reviewPic);
+                    if(ReviewPicFile != null)
+                    {
+                        // get the rotation from the profile pic and insert it as expected
+                        int rotation = ImageInfo.getCameraPhotoOrientation(ReviewPicFile.getAbsolutePath());
+                        reviewPicHolder.setImageBitmap(BitmapFactory.decodeFile(ReviewPicFile.getAbsolutePath()));
+                        reviewPicHolder.setRotation(rotation * -1);
+                    }
                 }
 
                 // set onclicklisteners for the upvote and downvote buttons

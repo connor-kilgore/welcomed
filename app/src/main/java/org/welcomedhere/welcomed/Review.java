@@ -9,19 +9,19 @@ public class Review implements Serializable {
     public int businessID;
     public String bodyText;
     public String userID;
-    public String img_link;
+    public boolean hasImg;
     public String date;
     public String name;
     public boolean anonymous;
     public ArrayList<String> traits;
     public DatabaseConstants.Request request;
 
-    public Review(int businessID, String bodyText, String userID, String img_link, String date, boolean anonymous, ArrayList<String> traits)
+    public Review(int businessID, String bodyText, String userID, Boolean hasImg, String date, boolean anonymous, ArrayList<String> traits)
     {
         this.businessID = businessID;
         this.bodyText = bodyText;
         this.userID = userID;
-        this.img_link = img_link;
+        this.hasImg = hasImg;
         this.date = date;
         this.anonymous = anonymous;
         this.traits = traits;
@@ -33,7 +33,7 @@ public class Review implements Serializable {
         this.businessID = review.businessID;
         this.bodyText = review.bodyText;
         this.userID = review.userID;
-        this.img_link = review.img_link;
+        this.hasImg = review.hasImg;
         this.date = review.date;
         this.anonymous = review.anonymous;
         this.traits = new ArrayList<String>(review.traits);
@@ -47,6 +47,6 @@ public class Review implements Serializable {
 
     public void printInfo()
     {
-        System.out.println("businessID: " + businessID + "\nbodyText: " + bodyText + "\nuserID: " + userID + "\nimg_link: " + img_link + "\nanonymous: " + anonymous);
+        System.out.println("businessID: " + businessID + "\nbodyText: " + bodyText + "\nuserID: " + userID + "\nhasImg: " + hasImg + "\nanonymous: " + anonymous);
     }
 }
