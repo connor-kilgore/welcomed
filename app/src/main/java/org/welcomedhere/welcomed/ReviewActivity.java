@@ -1,17 +1,23 @@
 package org.welcomedhere.welcomed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -19,11 +25,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.welcomedhere.welcomed.data.ProfileManager;
 import org.welcomedhere.welcomed.models.ReviewModel;
@@ -34,12 +42,14 @@ public class ReviewActivity extends AppCompatActivity {
 
     public static final String USER_DATA = "user_data"; // to get stored preferences
     public static final String ANON_KEY = "anon_key"; // to get anonymous preference
+    final int PICK_FROM_GALLERY = 1;
     SharedPreferences userdata;
     private Button saveBtn;
     private Button addBtn;
     private String businessID;
     ReviewModel reviewModel;
     Review review;
+    Uri photoUri = null;
 
     // get trait types
     ArrayList<String> traitTypes;
@@ -75,7 +85,7 @@ public class ReviewActivity extends AppCompatActivity {
         userdata = getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
         String anon = userdata.getString(ANON_KEY, null);
         SwitchCompat anonSwitch = findViewById(R.id.toggle);
-        if(anon.equals("yes")) {
+        if(anon.equals("Yes")) {
             anonSwitch.setChecked(true);    // change state to true if anon is yes
         }
 
@@ -119,6 +129,25 @@ public class ReviewActivity extends AppCompatActivity {
             }
         });
 
+        Button changePhoto = findViewById(R.id.add_photo);
+        changePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    // check if permission is not granted
+                    if (ActivityCompat.checkSelfPermission(ReviewActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        // if so, ask for permission
+                        ActivityCompat.requestPermissions(ReviewActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PICK_FROM_GALLERY);
+                    } else {
+                        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(galleryIntent, PICK_FROM_GALLERY);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         // set the saveBtn
         saveBtn = (Button) findViewById(R.id.submit_button);
 
@@ -131,12 +160,23 @@ public class ReviewActivity extends AppCompatActivity {
                 EditText edit = (EditText) findViewById(R.id.comment_holder);
 
                 // instantiate review class
-                review = new Review(businessData.businessID, edit.getText().toString(), manager.getCurrentUid(), "null", "", anonSwitch.isChecked(), traitList);
+                review = new Review(businessData.businessID, edit.getText().toString(), manager.getCurrentUid(), photoUri != null, "", anonSwitch.isChecked(), traitList);
 
-                // initialize client class
-                Client client = new Client(review, "create");
+                // initialize client class to send data to db
+                Client dbThread = new Client(review, "create");
                 // run client entry on separate thread
-                client.start();
+                dbThread.start();
+
+                if(photoUri != null)
+                {
+                    // create imageInfo with the uri and path
+                    ImageInfo newProfilePic = new ImageInfo("reviewPhotos/" + businessData.businessID + "_" + FirebaseAuth.getInstance().getUid() + ".jpg", photoUri);
+
+                    // send to s3 bucket
+                    Client picSendThread = new Client(newProfilePic, "SEND");
+                    picSendThread.context = ReviewActivity.this;
+                    picSendThread.start();
+                }
 
                 // move back to the business profile page
                 Intent intent = new Intent(view.getContext(), PlaceDetailsActivity.class);
@@ -225,6 +265,51 @@ public class ReviewActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // when gallery permissions is granted, this method is called to send user to gallery UI
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PICK_FROM_GALLERY:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, PICK_FROM_GALLERY);
+                } else {
+                    // request permission again
+                    ActivityCompat.requestPermissions(ReviewActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PICK_FROM_GALLERY);
+                }
+                break;
+        }
+    }
+
+    // when the photo from gallery is selected, this is called
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, final Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            // Handle error
+            return;
+        }
+
+        switch (requestCode) {
+            case PICK_FROM_GALLERY:
+                // Get photo picker response for single select.
+                photoUri = data.getData();
+
+                // get the profile picture element
+                ImageView reviewPhoto = findViewById(R.id.review_photo);
+
+                // set it's image to currentUri
+                reviewPhoto.setImageURI(photoUri);
+
+                //you got image path, now you may use this
+                break;
+        }
     }
 
     private void addTraitXML(FlexboxLayout traitBox, String item, ArrayList<String> selectedTraits)

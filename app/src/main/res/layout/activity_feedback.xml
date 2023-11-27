@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ProfileActivity">
+    tools:context=".ReviewActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -104,7 +104,7 @@
                 android:background="@drawable/tag_holder"
                 android:fontFamily="@font/dyslexie"
                 android:gravity="center"
-                android:hint="this holds the comments"
+                android:hint="type your comment here"
                 android:padding="10dp"
                 android:textColor="#5C5252"
                 android:textSize="14sp"
@@ -112,10 +112,21 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@id/add_comments"/>
 
+            <ImageView
+                android:id="@+id/review_photo"
+                android:layout_width="316dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pfp_background"
+                android:layout_centerHorizontal="true"
+                android:scaleType="centerCrop"
+                android:layout_below="@id/comment_holder"/>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/add_photo"
                 android:layout_width="316dp"
                 android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/input_purple_outline"
                 android:fontFamily="@font/dyslexie"
                 android:hint="@string/upload_image"
@@ -123,7 +134,7 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/comment_holder"/>
+                android:layout_below="@id/review_photo"/>
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/toggle"

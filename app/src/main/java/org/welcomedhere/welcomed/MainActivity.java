@@ -4,26 +4,75 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.slider.Slider;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    protected static final String apiKey = "AIzaSyDKAAE9roCSy-Kifb3a774-vabVEr3gl3s";
+    private int distance = 1;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // set bottom nav bar properties
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -49,8 +98,166 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
 
+        // find the slider and distance text by id
+        Slider distanceSlider = findViewById(R.id.distance_slider);
+        TextView distanceText = findViewById(R.id.miles_text);
+
+        // change running distance from
+        distanceSlider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                //Use the value
+                distance = (int) value;
+                distanceText.setText(distance + " mi");
+            }
+        });
+
+        // set listener for food button
+        Button foodBtn = findViewById(R.id.food_button);
+        foodBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getJsonData("restaurant", "nearby");
+            }
+        });
+
+        // set listener for shop button
+        Button shopBtn = findViewById(R.id.stores_button);
+        shopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getJsonData("store|convenience_store|drugstore", "nearby");
+            }
+        });
+
+        // set listener for bathroom button
+        Button bathroomBtn = findViewById(R.id.bathrooms_button);
+        bathroomBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getJsonData("toilets near me", "text");
+            }
+        });
+
+        // set listener for fun button
+        Button funBtn = findViewById(R.id.fun_button);
+        funBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getJsonData("fun things to do near me", "text");
+            }
+        });
+
+        // set listener for Drinks button
+        Button drinksBtn = findViewById(R.id.drinks_button);
+        drinksBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getJsonData("bar|cafe|liquor_store", "text");
+            }
+        });
     }
 
+    private void getJsonData(String type, String queryType) {
+        // get current lat and long
+        if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // create a separate thread for network request to get nearby google maps places
+                                NearbyPlaceFinder getPlacesThread =  new NearbyPlaceFinder(location.getLatitude(), location.getLongitude(), (distance * 1609) + "", type, apiKey, queryType);
+                                getPlacesThread.start();
+                                try {
+                                    getPlacesThread.join();
+                                    // parse the json data
+                                    showBottomDialog(getPlacesThread.places);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void showBottomDialog(ArrayList<NearbyPlace> places) {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottomsheet_layout);
+
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        LinearLayout layout = dialog.findViewById(R.id.dynamic_layout);
+
+        // create a string array and add all placeIds to it
+        ArrayList<String> mapIdList = new ArrayList<>();
+        for(int index = 0; index < places.size(); index++)
+        {
+            // add googleID to mapIDList
+            mapIdList.add(places.get(index).googlePlaceID);
+        }
+
+        // get the places top traits
+        ArrayList<ArrayList<TraitValue>> nearbyTraits = getNearbyPlaceTraits(mapIdList);
+
+        // iterate through all the nearby places
+        for(int index = 0; index < places.size(); index++)
+        {
+            // add the view into the xml file
+            View view = getLayoutInflater().inflate(R.layout.nearby_place, null);
+            layout.addView(view);
+
+            // set the name and address
+            ((TextView)view.findViewById(R.id.name)).setText(places.get(index).name);
+            ((TextView)view.findViewById(R.id.address)).setText(places.get(index).address);
+            int distanceTemp = (int)(places.get(index).distance * 10);
+            ((TextView)view.findViewById(R.id.distance)).setText(distanceTemp/10 + "." + distanceTemp % 10 + " mi");
+
+            //((ImageView)view.findViewById(R.id.placeImg)).setImageBitmap(places.get(index).placeImgBM);  <-- this is way too expensive in terms of API calls
+
+            int finalIndex = index;
+            ((RelativeLayout)view.findViewById(R.id.review_box)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // get business data from server and send to details page
+                    Business b = new Business(places.get(finalIndex).googlePlaceID, places.get(finalIndex).address, places.get(finalIndex).name);
+                    b.request = DatabaseConstants.Request.ENTRY;
+                    // set business request type to "entry"
+                    b = new Business((Business) (new Client(b, "request")).getObjectFromServer());
+
+                    Intent intent = new Intent(MainActivity.this, PlaceDetailsActivity.class);
+                    intent.putExtra("businessInfo", b.toString());
+                    startActivity(intent);
+                }
+            });
+
+            // populate traits
+            TextView traitReviewText = view.findViewById(R.id.good_trait_1);
+            for(int inner = 0; inner < nearbyTraits.get(index).size(); inner++)
+            {
+                traitReviewText.setText(traitReviewText.getText() + nearbyTraits.get(index).get(inner).trait);
+                if(inner != nearbyTraits.get(index).size() - 1)
+                {
+                    traitReviewText.setText(traitReviewText.getText() + ", ");
+                }
+            }
+        }
+    }
+
+    public ArrayList<ArrayList<TraitValue>> getNearbyPlaceTraits(ArrayList<String> mapIds)
+    {
+        return (ArrayList<ArrayList<TraitValue>>) new Client(mapIds, "getNearbyPlaces").getObjectFromServer();
+    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item){
@@ -77,9 +284,4 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         int ID= v.getId();
         //todo add onclick handling for buttons
     }
-
-
-
-
-
 }

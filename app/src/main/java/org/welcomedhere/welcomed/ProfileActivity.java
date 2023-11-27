@@ -28,9 +28,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import org.welcomedhere.welcomed.data.ProfileManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
@@ -43,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
     public static final String SO_KEY = "so_key";
     public static final String INCLUSION_KEY = "inclusion_key";
     public static final String ANON_KEY = "anon_key";
+    public static final String IMAGE_KEY = "user_image_key";
     SharedPreferences userdata;
 
     private Button saveBtn;
@@ -115,8 +116,19 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
         String so = userdata.getString(SO_KEY, null);
         String inclusion = userdata.getString(INCLUSION_KEY, null);
         String anon = userdata.getString(ANON_KEY, null);
+        String uriStr = userdata.getString(IMAGE_KEY, null);
+
+        // set the welcome text
+        TextView welcomeText = findViewById(R.id.name);
+        welcomeText.setText("welcome " + name);
 
         //System.out.println(name + ", " + gender + ", " + race + ", " + so + ", " + inclusion + ", " + anon);
+
+        // check if uri exists
+        if(uriStr != null)
+        {
+            ((ImageView)findViewById(R.id.profile_picture)).setImageURI(Uri.parse(uriStr));
+        }
 
         // check if these values exist
         if(name != null && gender != null && race != null && so != null && inclusion != null && anon != null)
@@ -300,13 +312,21 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
                 // set it's image to currentUri
                 profilePic.setImageURI(currentUri);
 
-                Client picSend = new Client(currentUri, "sendProfilePicture");
+                // save image to sharedpreferences
+                SharedPreferences.Editor editor = userdata.edit();
+                editor.putString(IMAGE_KEY, currentUri.toString());
+                // apply saved values
+                editor.apply();
+
+                // create imageInfo with the uri and path
+                ImageInfo newProfilePic = new ImageInfo("profilePhotos/" + FirebaseAuth.getInstance().getUid() + ".jpg", currentUri);
+
+                Client picSend = new Client(newProfilePic, "SEND");
                 picSend.context = ProfileActivity.this;
                 picSend.start();
 
                 //you got image path, now you may use this
-                return;
-
+                break;
         }
     }
 

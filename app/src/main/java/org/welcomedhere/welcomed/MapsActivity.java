@@ -241,7 +241,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
                     Intent intent = new Intent(MapsActivity.this, PlaceDetailsActivity.class);
                     intent.putExtra("businessInfo", tag);
                     startActivity(intent);
-
                 } else {
                     return;
                 }
@@ -425,8 +424,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),
                 DEFAULT_ZOOM));
 
-        System.out.println("\n\nTEST");
-
         Business b=new Business(place.getId(), place.getAddress(), place.getName());
         b.request = DatabaseConstants.Request.ENTRY;
         // set business request type to "entry"
@@ -463,8 +460,6 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
 
         // divide netPositive by myTraits.size
         double ratio = netPositive/myTraits.size();
-
-        System.out.println(ratio + "\n\n");
 
         BitmapDrawable bitmapdraw;
         // check if ratio is 50% or higher

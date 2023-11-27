@@ -7,7 +7,7 @@ public class Report implements Serializable {
     String userID;
     boolean followUpRequested;
     String reportText;
-
+    Boolean hasImg;
     ReportType type;
     enum ReportType{
         ADA,
@@ -15,13 +15,14 @@ public class Report implements Serializable {
         OTHER
     }
 
-    public Report(int businessID, String userID, ReportType type, boolean followUpRequested, String reportText)
+    public Report(int businessID, String userID, ReportType type, boolean followUpRequested, String reportText, Boolean hasImg)
     {
         this.businessID = businessID;
         this.userID = userID;
         this.type = type;
         this.followUpRequested = followUpRequested;
         this.reportText = reportText;
+        this.hasImg = hasImg;
     }
 
     public void printInfo()

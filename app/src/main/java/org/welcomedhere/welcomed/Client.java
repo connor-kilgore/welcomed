@@ -1,16 +1,25 @@
 package org.welcomedhere.welcomed;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 
-import androidx.core.app.ActivityCompat;
-
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.welcomedhere.welcomed.User;
+import com.amazonaws.regions.Regions;
 
 import java.io.*;
 import java.net.*;
@@ -18,8 +27,9 @@ import java.net.*;
 
 public class Client extends Thread {
     // set constants
-    public static final String IP_ADDRESS = "ec2-54-241-147-131.us-west-1.compute.amazonaws.com";
-    public static final int PORT = 23657;
+    public static final String IP_ADDRESS = "ec2-54-241-147-131.us-west-1.compute.amazonaws.com";   // TODO: make this encrypted value in keystore
+    public static final int PORT = 23657;   // TODO: make this encrypted value in keystore
+    private final String BUCKET_NAME = "welcomed-bucket";
     public User profileResult = null;
     private String parameter;
     private Object object;
@@ -81,9 +91,14 @@ public class Client extends Thread {
                 sendObjectToServer();
             }
         }
-        else if(object instanceof Uri)
+        else if(object instanceof ImageInfo)
         {
-            sendPictureToServer((Uri) object, parameter);
+            if (parameter == "GET")
+            {
+                getImageFromBucket((ImageInfo) object);
+            } else if (parameter == "SEND") {
+                sendImageToBucket((ImageInfo) object);
+            }
         }
     }
 
@@ -111,6 +126,67 @@ public class Client extends Thread {
         }
     }
 
+    public File getImageFromBucket(ImageInfo image)
+    {
+        CognitoCachingCredentialsProvider credentialsProvider;
+        credentialsProvider = new CognitoCachingCredentialsProvider(
+                context,
+                "us-west-1:39690302-b15b-46d2-87cd-fdc5a58fbacb", // Identity Pool ID
+                Regions.US_WEST_1 // Region
+        );
+
+        AmazonS3 s3Client = new AmazonS3Client(credentialsProvider);
+
+        File imageFile = null;
+
+        try {
+            File outputDir = context.getCacheDir();
+            imageFile = File.createTempFile("prefix", "extension", outputDir);
+
+            S3Object o = s3Client.getObject(BUCKET_NAME, image.path);
+            S3ObjectInputStream s3is = o.getObjectContent();
+            FileOutputStream fos = new FileOutputStream(imageFile);
+            byte[] read_buf = new byte[1024];
+            int read_len = 0;
+            while ((read_len = s3is.read(read_buf)) > 0) {
+                fos.write(read_buf, 0, read_len);
+                System.out.println("downloaded successfully!");
+            }
+            s3is.close();
+            fos.close();
+        } catch (AmazonServiceException e) {
+            System.err.println(e.getErrorMessage());
+            return null;
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+            return null;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return imageFile;
+    }
+
+    private void sendImageToBucket(ImageInfo image)
+    {
+        CognitoCachingCredentialsProvider credentialsProvider;
+        credentialsProvider = new CognitoCachingCredentialsProvider(
+                context,
+                "us-west-1:39690302-b15b-46d2-87cd-fdc5a58fbacb", // Identity Pool ID
+                Regions.US_WEST_1 // Region
+        );
+
+        AmazonS3 s3Client = new AmazonS3Client(credentialsProvider);
+
+        File file = getFileFromUri(image.photoUri);
+        PutObjectRequest putRequest = new PutObjectRequest(BUCKET_NAME, image.path, file);
+        ObjectMetadata metadata = new ObjectMetadata();
+        putRequest.setMetadata(metadata);
+
+        s3Client.putObject(putRequest);
+        System.out.println("File uploaded successfully!");
+    }
+
     private void sendPictureToServer(Uri currentUri, String operation)
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -136,7 +212,7 @@ public class Client extends Thread {
             // get the current userID
             String userID = FirebaseAuth.getInstance().getUid();
 
-            ImageInfo info = new ImageInfo(userID + ".png", byteArray.length);
+            ImageInfo info = new ImageInfo(userID + ".png", null);
             if(operation.equals("sendProfilePicture"))
             {
                 info.op = ImageInfo.ImageOpertion.SEND_PROFILE_PICTURE;
@@ -217,6 +293,33 @@ public class Client extends Thread {
         catch(Exception e)
         {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    private File getFileFromUri(Uri uri)
+    {
+        // Assuming 'uri' is the Uri you want to convert to a File
+
+        String filePath = null;
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { MediaStore.Images.Media.DATA };
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                filePath = cursor.getString(columnIndex);
+                cursor.close();
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            filePath = uri.getPath();
+        }
+
+        if (filePath != null) {
+            File file = new File(filePath);
+            return file;
+            // 'file' contains the File object representing the file corresponding to the Uri
+        } else {
+            // Handle the case where filePath is null or couldn't be retrieved
             return null;
         }
     }

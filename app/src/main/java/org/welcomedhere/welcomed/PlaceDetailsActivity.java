@@ -8,11 +8,14 @@ import androidx.core.content.ContextCompat;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,8 +25,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.welcomedhere.welcomed.data.ProfileManager;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 public class PlaceDetailsActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -86,7 +98,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
                     layout.setBackground(ContextCompat.getDrawable(traitListPopup.getContext(), R.drawable.blue_button));
                 }
 
-                System.out.println(topTraits.get(index).trait + ", " + topTraits.get(index).value);
+                //System.out.println(topTraits.get(index).trait + ", " + topTraits.get(index).value);
             }
         }
 
@@ -178,8 +190,59 @@ public class PlaceDetailsActivity extends AppCompatActivity implements BottomNav
 
                 // set appropriate username, text and date
                 reviewBody.setText(reviews[index].bodyText);
-                date.setText(reviews[index].date);
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    LocalDateTime datetime = LocalDateTime.parse(reviews[index].date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    // Convert LocalDateTime to ZonedDateTime with UTC timezone
+                    ZonedDateTime zonedDateTimeUTC = datetime.atZone(ZoneId.of("UTC"));
+                    ZonedDateTime adjustedDateTime = zonedDateTimeUTC.withZoneSameInstant(TimeZone.getDefault().toZoneId());
+                    // format prettyTime data
+                    PrettyTime p = new PrettyTime();
+                    date.setText(p.format(Date.from(adjustedDateTime.toInstant())));
+                }
+                else {
+                    date.setText(reviews[index].date);
+                }
+
                 name.setText(reviews[index].name);
+
+                // get the user profile picture for the review box
+                ImageView profilePicHolder = view.findViewById(R.id.profile_pic);
+                ImageInfo profilePic = new ImageInfo("profilePhotos/" + reviews[index].userID + ".jpg", null);
+                Client client = new Client(profilePic, "GET");
+                client.context = PlaceDetailsActivity.this;
+                File profilePicFile = client.getImageFromBucket(profilePic);
+                if(profilePicFile != null)
+                {
+                    // get the rotation from the profile pic and insert it as expected
+                    int rotation = ImageInfo.getCameraPhotoOrientation(profilePicFile.getAbsolutePath());
+                    profilePicHolder.setImageBitmap(BitmapFactory.decodeFile(profilePicFile.getAbsolutePath()));
+                    profilePicHolder.setRotation(rotation * -1);
+                }
+
+                // check if the review has a photo
+                if(reviews[index].hasImg)
+                {
+                    ImageView reviewPicHolder = view.findViewById(R.id.review_photo);
+                    ImageInfo reviewPic = new ImageInfo("reviewPhotos/" + reviews[index].businessID + "_" + reviews[index].userID + ".jpg", null);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(316, 316);
+
+                    // set image view dimensions
+                    int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 316, getResources().getDisplayMetrics());
+                    reviewPicHolder.requestLayout();
+                    reviewPicHolder.getLayoutParams().height = dimensionInDp;
+
+                    Client getReviewPicThread = new Client(profilePic, "GET");
+                    client.context = PlaceDetailsActivity.this;
+                    File ReviewPicFile = client.getImageFromBucket(reviewPic);
+                    if(ReviewPicFile != null)
+                    {
+                        // get the rotation from the profile pic and insert it as expected
+                        int rotation = ImageInfo.getCameraPhotoOrientation(ReviewPicFile.getAbsolutePath());
+                        reviewPicHolder.setImageBitmap(BitmapFactory.decodeFile(ReviewPicFile.getAbsolutePath()));
+                        reviewPicHolder.setRotation(rotation * -1);
+                    }
+                }
 
                 // set onclicklisteners for the upvote and downvote buttons
                 int finalIndex = index;
