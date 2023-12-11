@@ -125,7 +125,7 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
         //System.out.println(name + ", " + gender + ", " + race + ", " + so + ", " + inclusion + ", " + anon);
 
         // check if uri exists
-        if(uriStr != null)
+        if(uriStr != null && !(ActivityCompat.checkSelfPermission(ProfileActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
         {
             ((ImageView)findViewById(R.id.profile_picture)).setImageURI(Uri.parse(uriStr));
         }
@@ -329,7 +329,6 @@ public class ProfileActivity extends AppCompatActivity implements BottomNavigati
                 break;
         }
     }
-
 
     private User buildUserFromEntries() {
         // get current user data

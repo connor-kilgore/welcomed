@@ -432,7 +432,7 @@ public class MapsActivity extends AppCompatActivity implements BottomNavigationV
         User usr = ProfileManager.getCurrentUser();
 
         // create an empty review with user and businessID
-        Review sendReview = new Review(b.businessID, null, usr.userID, null, null, false, null);
+        Review sendReview = new Review(b.businessID, null, usr.userID, false, null, false, null);
         sendReview.request = DatabaseConstants.Request.GET_MATCHING_TRAITS;
 
         // get all the traits that match with the user

@@ -3,11 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -37,11 +34,13 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name=".PreferencesActivity"
+        <activity
+            android:name=".PreferencesActivity"
             android:exported="false"
             android:parentActivityName=".ProfileActivity" />
 
-        <activity android:name=".ReportActivity"
+        <activity
+            android:name=".ReportActivity"
             android:exported="false"
             android:parentActivityName=".PlaceDetailsActivity" />
 

@@ -2,32 +2,30 @@ package org.welcomedhere.welcomed;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.google.firebase.auth.FirebaseAuth;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-import com.amazonaws.regions.Regions;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
 
 
 public class Client extends Thread {
     // set constants
-    public static final String IP_ADDRESS = "ec2-54-241-147-131.us-west-1.compute.amazonaws.com";   // TODO: make this encrypted value in keystore
+    public static final String IP_ADDRESS = "ec2-54-151-43-5.us-west-1.compute.amazonaws.com";   // TODO: make this encrypted value in keystore
     public static final int PORT = 23657;   // TODO: make this encrypted value in keystore
     private final String BUCKET_NAME = "welcomed-bucket";
     public User profileResult = null;
@@ -128,127 +126,60 @@ public class Client extends Thread {
 
     public File getImageFromBucket(ImageInfo image)
     {
-        CognitoCachingCredentialsProvider credentialsProvider;
-        credentialsProvider = new CognitoCachingCredentialsProvider(
-                context,
-                "us-west-1:39690302-b15b-46d2-87cd-fdc5a58fbacb", // Identity Pool ID
-                Regions.US_WEST_1 // Region
-        );
+        StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(AwsBasicCredentials.create("AKIAQIQXYNDUOJOBQ5U4", "iPmqoEg9yEFn4eQZPJHgL9GDYZy2BeB6JPU7ST9L"));
+        S3AsyncClient s3Client = S3AsyncClient.builder()
+                .credentialsProvider(staticCredentialsProvider)
+                .region(Region.US_WEST_1)
+                .build();
 
-        AmazonS3 s3Client = new AmazonS3Client(credentialsProvider);
+        GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(image.path)
+                .build();
 
-        File imageFile = null;
+        File imageFile = new File(context.getFilesDir(), "imageFile.jpg");
 
-        try {
-            File outputDir = context.getCacheDir();
-            imageFile = File.createTempFile("prefix", "extension", outputDir);
+        // Start the call to Amazon S3, not blocking to wait for the result
+        CompletableFuture<GetObjectResponse> responseFuture =
+                s3Client.getObject(GetObjectRequest.builder()
+                                .bucket(BUCKET_NAME)
+                                .key(image.path)
+                                .build(),
+                        AsyncResponseTransformer.toFile(imageFile));
 
-            S3Object o = s3Client.getObject(BUCKET_NAME, image.path);
-            S3ObjectInputStream s3is = o.getObjectContent();
-            FileOutputStream fos = new FileOutputStream(imageFile);
-            byte[] read_buf = new byte[1024];
-            int read_len = 0;
-            while ((read_len = s3is.read(read_buf)) > 0) {
-                fos.write(read_buf, 0, read_len);
-                System.out.println("downloaded successfully!");
-            }
-            s3is.close();
-            fos.close();
-        } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            return null;
-        } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
-            return null;
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            return null;
-        }
+        // When future is complete (either successfully or in error), handle the response
+        CompletableFuture<GetObjectResponse> operationCompleteFuture =
+                responseFuture.whenComplete((getObjectResponse, exception) -> {
+                    if (getObjectResponse != null) {
+                        // At this point, the file my-file.out has been created with the data
+                    } else {
+                        // Handle the error
+                        exception.printStackTrace();
+                    }
+                });
+
+        // We could do other work while waiting for the AWS call to complete in
+        // the background, but we'll just wait for "whenComplete" to finish instead
+        operationCompleteFuture.join();
+
         return imageFile;
     }
 
     private void sendImageToBucket(ImageInfo image)
     {
-        CognitoCachingCredentialsProvider credentialsProvider;
-        credentialsProvider = new CognitoCachingCredentialsProvider(
-                context,
-                "us-west-1:39690302-b15b-46d2-87cd-fdc5a58fbacb", // Identity Pool ID
-                Regions.US_WEST_1 // Region
-        );
+        StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(AwsBasicCredentials.create("AKIAQIQXYNDUOJOBQ5U4", "iPmqoEg9yEFn4eQZPJHgL9GDYZy2BeB6JPU7ST9L"));
 
-        AmazonS3 s3Client = new AmazonS3Client(credentialsProvider);
+        S3AsyncClient s3Client = S3AsyncClient.builder()
+                .credentialsProvider(staticCredentialsProvider)
+                .region(Region.US_WEST_1)
+                .build();
 
-        File file = getFileFromUri(image.photoUri);
-        PutObjectRequest putRequest = new PutObjectRequest(BUCKET_NAME, image.path, file);
-        ObjectMetadata metadata = new ObjectMetadata();
-        putRequest.setMetadata(metadata);
+        String imageFilePath = getFilePathFromUri(image.photoUri);
 
-        s3Client.putObject(putRequest);
+
+        s3Client.putObject(builder -> builder.bucket(BUCKET_NAME).key(image.path), Paths.get(imageFilePath));
+
         System.out.println("File uploaded successfully!");
-    }
-
-    private void sendPictureToServer(Uri currentUri, String operation)
-    {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        try
-        {
-            // create a socket
-            Socket socket = new Socket(IP_ADDRESS, PORT);
-
-            // find the photo and convert it to a bitmap
-            File selected_photo;
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeFile(FileChooser.getPath(context, currentUri), options);
-
-            // compress the bitmap into a PNG byte array
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-            byte[] byteArray = byteStream.toByteArray();
-
-            // create an object output stream
-            ObjectOutputStream  oos = new ObjectOutputStream(socket.getOutputStream());
-            // get the current userID
-            String userID = FirebaseAuth.getInstance().getUid();
-
-            ImageInfo info = new ImageInfo(userID + ".png", null);
-            if(operation.equals("sendProfilePicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.SEND_PROFILE_PICTURE;
-            }
-            else if(operation.equals("sendReviewPicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.SEND_REVIEW_PICTURE;
-            }
-            else if(operation.equals("sendReportPicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.SEND_REPORT_PICTURE;
-            }
-            else if(operation.equals("getProfilePicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.GET_PROFILE_PICTURE;
-            }
-            else if(operation.equals("getReviewPicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.GET_REVIEW_PICTURE;
-            }
-            else if(operation.equals("getReportPicture"))
-            {
-                info.op = ImageInfo.ImageOpertion.GET_REPORT_PICTURE;
-            }
-
-            // send the image info to the server
-            oos.writeObject(info);
-            oos.flush();
-
-            // send the complete byte array to the server
-            byteStream.writeTo(socket.getOutputStream());
-
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     public Object getObjectFromServer()
@@ -297,7 +228,7 @@ public class Client extends Thread {
         }
     }
 
-    private File getFileFromUri(Uri uri)
+    private String getFilePathFromUri(Uri uri)
     {
         // Assuming 'uri' is the Uri you want to convert to a File
 
@@ -315,8 +246,7 @@ public class Client extends Thread {
         }
 
         if (filePath != null) {
-            File file = new File(filePath);
-            return file;
+            return filePath;
             // 'file' contains the File object representing the file corresponding to the Uri
         } else {
             // Handle the case where filePath is null or couldn't be retrieved

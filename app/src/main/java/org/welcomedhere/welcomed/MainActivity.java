@@ -5,66 +5,41 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.slider.Slider;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     protected static final String apiKey = "AIzaSyDKAAE9roCSy-Kifb3a774-vabVEr3gl3s";
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private int distance = 1;
     private FusedLocationProviderClient fusedLocationClient;
+    private boolean locationPermissionGranted;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -117,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         foodBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getLocationPermission();
                 getJsonData("restaurant", "nearby");
             }
         });
@@ -126,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         shopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getLocationPermission();
                 getJsonData("store|convenience_store|drugstore", "nearby");
             }
         });
@@ -135,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bathroomBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getLocationPermission();
                 getJsonData("toilets near me", "text");
             }
         });
@@ -144,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         funBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getLocationPermission();
                 getJsonData("fun things to do near me", "text");
             }
         });
@@ -153,7 +132,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         drinksBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getLocationPermission();
                 getJsonData("bar|cafe|liquor_store", "text");
+            }
+        });
+
+        Button mapNav = findViewById(R.id.map_navigate);
+        mapNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -283,5 +273,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void onClick(View v){
         int ID= v.getId();
         //todo add onclick handling for buttons
+    }
+
+    private void getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
     }
 }

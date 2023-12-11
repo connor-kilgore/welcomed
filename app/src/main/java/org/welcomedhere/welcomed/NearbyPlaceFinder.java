@@ -1,20 +1,14 @@
 package org.welcomedhere.welcomed;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -64,6 +58,7 @@ public class NearbyPlaceFinder extends Thread{
         }
     }
 
+    /*
     private Bitmap getImageBitMap(String photoRef) throws IOException {
         URL photoUrl = new URL("https://maps.googleapis.com/maps/api/place/photo?" + // url
                 "maxwidth=400" + // photo size
@@ -93,6 +88,7 @@ public class NearbyPlaceFinder extends Thread{
         // convert to bitmap and return
         return BitmapFactory.decodeByteArray(bytebuffer, 0, bytebuffer.length);
     }
+     */
 
     private String downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);

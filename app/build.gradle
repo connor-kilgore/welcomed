@@ -15,16 +15,18 @@ android {
         exclude("META-INF/notice.txt")
         exclude("META-INF/ASL2.0")
         exclude("META-INF/*.kotlin_module")
+        exclude("META-INF/INDEX.LIST")
+        exclude("META-INF/io.netty.versions.properties")
     }
     namespace 'org.welcomedhere.welcomed'
     compileSdk 33
 
     defaultConfig {
         applicationId "org.welcomedhere.welcomed"
-        minSdk 24
+        minSdk 26
         targetSdk 33
-        versionCode 29
-        versionName "1.01"
+        versionCode 33
+        versionName "1.02"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -71,9 +73,8 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     // s3 bucket dependencies
-    implementation 'com.amazonaws:aws-android-sdk-core:2.6.0'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.0'
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.0'
+    implementation 'software.amazon.awssdk:s3:2.21.40' // Replace '2.x.x' with the latest version of AWS S3 SDK
+    //implementation 'software.amazon.awssdk:netty-nio-client:2.15.84' // Replace '2.x.x' with the latest version of Netty NIO client for AWS SDK
 
     // pretty time
     implementation 'org.ocpsoft.prettytime:prettytime:5.0.1.Final'
